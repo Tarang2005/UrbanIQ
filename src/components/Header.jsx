@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import logo from '../logo.jpg'; // Import the logo image (adjust path if needed)
+import logo from '../logo.jpg'; // Assuming logo.png is in the src folder
 
 const Header = ({ selectedCity, isDarkMode, toggleDarkMode }) => {
   const location = useLocation();
@@ -20,14 +20,19 @@ const Header = ({ selectedCity, isDarkMode, toggleDarkMode }) => {
     <div className="mb-6">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-5 gap-4">
 
-        {/* --- Logo and Title Container --- */}
-        <div className="flex items-center gap-2"> {/* Use gap for spacing */}
-          <img src={logo} alt="UrbanIQ Logo" className="h-8 w-auto" /> {/* Adjust height (h-8) as needed */}
+        {/* Logo and Title Container */}
+        <div className="flex items-center gap-2">
+          {/* Ensure className has NO comment within or after it */}
+          <img
+            src={logo}
+            alt="UrbanIQ Logo"
+            className="h-8 w-auto rounded-md" // <-- Comment completely removed
+          />
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
              UrbanIQ
           </h1>
         </div>
-        {/* --- End Logo and Title Container --- */}
+        {/* End Logo and Title Container */}
 
 
         <div className="flex items-center gap-4">
