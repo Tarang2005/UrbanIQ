@@ -10,8 +10,8 @@ const WeatherPage = ({ city, data, helpers }) => {
 
       {data ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <ScoreCard title="Sentiment Score" value={data.sentimentScore.toFixed(2)} />
-          <ScoreCard title="Overall Sentiment" value={sentiment.label} color={sentiment.color} />
+          <ScoreCard title="Temperature" value={data.sentimentScore.toFixed(2)} />
+          <ScoreCard title="Overall Grade" value={sentiment.label} color={sentiment.color} />
           <div className="p-4 border border-gray-300 dark:border-slate-600 rounded-lg text-center text-gray-500 dark:text-gray-400">Live Weather Feed...</div>
         </div>
       ) : (
