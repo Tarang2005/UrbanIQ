@@ -1,23 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Header from "./components/Hearder";
+import Dashboard from "./components/Dashboard";
+import "./index.css";
 
 function App() {
+  const [selectedCity, setSelectedCity] = useState("Delhi");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <Header selectedCity={selectedCity} setSelectedCity={setSelectedCity} />
+      <Dashboard city={selectedCity} />
     </div>
   );
 }
