@@ -1,3 +1,80 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* src/index.css */
+
+/* --- Define Custom Cursors --- */
+
+/* === Base light mode cursors === */
+body {
+    /* Relative path from index.css to the cursors inside src */
+    cursor: url('./cursors/pando/light/Normal.cur'), auto;
+  }
+  
+  a, button, [role="button"], input[type='submit'], input[type='button'], label, select,
+  summary,
+  .cursor-pointer {
+    cursor: url('./cursors/pando/light/Link.cur'), pointer;
+  }
+  
+  input[type="text"], input[type="search"], input[type="email"], input[type="password"],
+  input[type="url"], input[type="tel"], textarea {
+    cursor: url('./cursors/pando/light/Text.cur'), text;
+  }
+  
+  /* Help cursor */
+  [data-tooltip], abbr[title] {
+    cursor: url('./cursors/pando/light/Help.cur'), help;
+  }
+  
+  /* Busy / Wait states */
+  .loading, [aria-busy="true"] {
+    cursor: url('./cursors/pando/light/Working.ani'), wait;
+  }
+  
+  /* Move cursor */
+  .draggable, [draggable="true"] {
+    cursor: url('./cursors/pando/light/Move.cur'), move;
+  }
+  
+  /* Unavailable cursor */
+  :disabled, [aria-disabled="true"] {
+      cursor: url('./cursors/pando/light/Unavailable.cur'), not-allowed;
+  }
+  
+  /* === Dark mode overrides === */
+  html.dark body {
+    cursor: url('./cursors/pando/dark/Normal.cur'), auto;
+  }
+  
+  html.dark a, html.dark button, html.dark [role="button"], html.dark input[type='submit'],
+  html.dark input[type='button'], html.dark label, html.dark select, html.dark summary,
+  html.dark .cursor-pointer {
+    cursor: url('./cursors/pando/dark/Link.cur'), pointer;
+  }
+  
+  html.dark input[type="text"], html.dark input[type="search"], html.dark input[type="email"],
+  html.dark input[type="password"], html.dark input[type="url"], html.dark input[type="tel"],
+  html.dark textarea {
+    cursor: url('./cursors/pando/dark/Text.cur'), text;
+  }
+  
+  html.dark [data-tooltip], html.dark abbr[title] {
+    cursor: url('./cursors/pando/dark/Help.cur'), help;
+  }
+  
+  html.dark .loading, html.dark [aria-busy="true"] {
+    cursor: url('./cursors/pando/dark/Working.ani'), wait;
+  }
+  
+  html.dark .draggable, html.dark [draggable="true"] {
+    cursor: url('./cursors/pando/dark/Move.cur'), move;
+  }
+  
+  html.dark :disabled, html.dark [aria-disabled="true"] {
+      cursor: url('./cursors/pando/dark/Unavailable.cur'), not-allowed;
+  }
+  /* --- End Custom Cursors --- */
+  
+  
+  /* --- Tailwind Base Styles (Keep these at the end) --- */
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
