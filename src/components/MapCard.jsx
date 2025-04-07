@@ -1,92 +1,142 @@
-// src/components/MapCard.jsx
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-// Import Google Maps components
 import { GoogleMap, MarkerF, InfoWindowF } from '@react-google-maps/api';
 
-// Map container style
 const containerStyle = {
   width: '100%',
-  height: '100%' // Ensure container takes available height
+  height: '100%' // Takes height from parent
 };
 
-// Props: city (string name), coords ({ lat: number, lng: number })
+// Basic dark mode map style from Google Docs examples (Snazzy Maps has more)
+const mapStyleDark = [
+  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#263c3f" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#6b9a76" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#38414e" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#212a37" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#9ca5b3" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#746855" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#1f2835" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#f3d19c" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#2f3948" }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#d59563" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#17263c" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#515c6d" }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#17263c" }],
+  },
+];
+
+
 const MapCard = ({ city, coords }) => {
-  const [map, setMap] = useState(null); // State to hold the map instance
-  const [showInfoWindow, setShowInfoWindow] = useState(true); // State to control info window visibility
+  const [map, setMap] = useState(null);
+  const [showInfoWindow, setShowInfoWindow] = useState(true);
+  const isDarkMode = document.documentElement.classList.contains('dark'); // Check current mode
 
-  const center = coords; // Use coords directly { lat: ..., lng: ... }
+  const center = coords;
 
-  // Callback when the map loads
-  const onLoad = useCallback(function callback(mapInstance) {
-    // Optionally: Adjust bounds or do something with the map instance
-    // const bounds = new window.google.maps.LatLngBounds(center);
-    // mapInstance.fitBounds(bounds);
-    setMap(mapInstance);
-  }, [center]); // Recalculate onLoad if center changes (though typically center is stable once loaded)
+  const onLoad = useCallback(mapInstance => setMap(mapInstance), []);
+  const onUnmount = useCallback(mapInstance => setMap(null), []);
 
-  // Callback when the map is unmounted
-  const onUnmount = useCallback(function callback(mapInstance) {
-    setMap(null);
-  }, []);
-
-  // Use effect to pan the map when coordinates change after initial load
   useEffect(() => {
-      if (map && center) {
-          map.panTo(center);
-          map.setZoom(13); // Reset zoom level on new search
-          setShowInfoWindow(true); // Show info window for new location
-      }
-  }, [center, map]); // Re-run effect if coords (center) or map instance change
+    if (map && center) {
+        map.panTo(center); map.setZoom(13); setShowInfoWindow(true);
+    }
+  }, [center, map]);
 
-  const handleMarkerClick = () => {
-    setShowInfoWindow(true);
-  };
-
-  const handleInfoWindowClose = () => {
-    setShowInfoWindow(false);
-  };
+  const handleMarkerClick = () => setShowInfoWindow(true);
+  const handleInfoWindowClose = () => setShowInfoWindow(false);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 h-full flex flex-col">
-      <h2 className="text-md font-semibold text-gray-700 mb-2">Interactive City Map: {city}</h2>
-      <div className="flex-grow h-full"> {/* Ensure this div takes up space */}
-        {/* Render GoogleMap only if coords are valid */}
+    // Add dark styles to card container
+    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md dark:shadow-slate-700/50 p-4 h-full flex flex-col">
+      {/* Add dark style to title */}
+      <h2 className="text-md font-semibold text-gray-700 dark:text-gray-200 mb-2">Interactive City Map: {city}</h2>
+      <div className="flex-grow h-full">
         {coords ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
-            zoom={13} // Initial zoom level
+            zoom={13}
             onLoad={onLoad}
             onUnmount={onUnmount}
-            options={{ // Optional: Disable some controls
-                streetViewControl: false,
-                mapTypeControl: false,
-                fullscreenControl: false,
+            options={{
+                streetViewControl: false, mapTypeControl: false, fullscreenControl: false,
+                styles: isDarkMode ? mapStyleDark : [] // Apply dark style conditionally
             }}
           >
-            {/* Child components, like markers, info windows, etc. */}
-            <MarkerF
-              position={center}
-              title={city}
-              onClick={handleMarkerClick} // Show info window on click
-            >
-             {/* Conditionally render InfoWindow based on state */}
+            <MarkerF position={center} title={city} onClick={handleMarkerClick}>
              {showInfoWindow && (
-                <InfoWindowF
-                    position={center}
-                    onCloseClick={handleInfoWindowClose} // Allow closing
-                >
-                    <div>
-                        <h3 className="font-semibold">{city}</h3>
-                        {/* Add more info if available */}
-                    </div>
+                <InfoWindowF position={center} onCloseClick={handleInfoWindowClose}>
+                    {/* Style info window content if needed */}
+                    <div> <h3 className="font-semibold text-gray-900">{city}</h3> </div>
                 </InfoWindowF>
               )}
             </MarkerF>
           </GoogleMap>
         ) : (
-           <div className="flex items-center justify-center h-full text-gray-500">Loading map...</div>
+           <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">Loading map...</div>
         )}
       </div>
     </div>

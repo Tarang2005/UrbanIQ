@@ -1,29 +1,24 @@
 import React from 'react';
-// Removed ScoreCard, ChartCard imports
-import MapCard from "./MapCard";
+import MapCard from "./MapCard"; // Import MapCard
 
-// Props now include city name and coordinates
-const OverviewPage = ({ city, coords, isLoading }) => { // Removed data, helpers. Added isLoading
+// OverviewPage primarily wraps MapCard
+const OverviewPage = ({ city, coords, isLoading }) => {
 
-  // Don't render the map until loading is finished and coords are valid
-  if (isLoading || !coords) {
-     // You might show a placeholder or nothing while loading/error
-    return null; // Or <div className="p-4 text-center">Waiting for location...</div>
+  // Don't render anything specific here if map handles its own loading state
+  if (isLoading) {
+    // Optionally show a general loading state for the page if desired
+    // return <div className="p-4 text-center text-gray-500 dark:text-gray-400">Loading overview...</div>;
   }
 
   return (
     <div className="space-y-6 mt-4">
-      {/* Removed Score Cards section */}
-
-      {/* Keep only the Map */}
-      <div className="grid grid-cols-1 gap-4" style={{ minHeight: "500px" }}> {/* Increased height maybe */}
+      {/* Container for the map, ensures it takes height */}
+      <div className="grid grid-cols-1 gap-4" style={{ minHeight: "60vh" }}> {/* Use vh or fixed height */}
         <div className="h-full">
-          {/* Pass the dynamic coordinates */}
-          <MapCard city={city} coords={coords} />
+           {/* MapCard will have its own dark mode styling */}
+           <MapCard city={city} coords={coords} />
         </div>
       </div>
-
-      {/* Removed AI Insights + Recommendations section */}
     </div>
   );
 };
