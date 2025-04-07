@@ -1,37 +1,93 @@
 // src/components/MapCard.jsx
-import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 
-const cityCoordinates = {
-  delhi: [28.6139, 77.2090],
-  mumbai: [19.0760, 72.8777],
-  bangalore: [12.9716, 77.5946],
-  chennai: [13.0827, 80.2707],
-  kolkata: [22.5726, 88.3639],
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+// Import Google Maps components
+import { GoogleMap, MarkerF, InfoWindowF } from '@react-google-maps/api';
+
+// Map container style
+const containerStyle = {
+  width: '100%',
+  height: '100%' // Ensure container takes available height
 };
 
-const MapCard = ({ city = "delhi" }) => {
-  const position = cityCoordinates[city.toLowerCase()] || cityCoordinates["delhi"];
+// Props: city (string name), coords ({ lat: number, lng: number })
+const MapCard = ({ city, coords }) => {
+  const [map, setMap] = useState(null); // State to hold the map instance
+  const [showInfoWindow, setShowInfoWindow] = useState(true); // State to control info window visibility
+
+  const center = coords; // Use coords directly { lat: ..., lng: ... }
+
+  // Callback when the map loads
+  const onLoad = useCallback(function callback(mapInstance) {
+    // Optionally: Adjust bounds or do something with the map instance
+    // const bounds = new window.google.maps.LatLngBounds(center);
+    // mapInstance.fitBounds(bounds);
+    setMap(mapInstance);
+  }, [center]); // Recalculate onLoad if center changes (though typically center is stable once loaded)
+
+  // Callback when the map is unmounted
+  const onUnmount = useCallback(function callback(mapInstance) {
+    setMap(null);
+  }, []);
+
+  // Use effect to pan the map when coordinates change after initial load
+  useEffect(() => {
+      if (map && center) {
+          map.panTo(center);
+          map.setZoom(13); // Reset zoom level on new search
+          setShowInfoWindow(true); // Show info window for new location
+      }
+  }, [center, map]); // Re-run effect if coords (center) or map instance change
+
+  const handleMarkerClick = () => {
+    setShowInfoWindow(true);
+  };
+
+  const handleInfoWindowClose = () => {
+    setShowInfoWindow(false);
+  };
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-4 h-full">
-      <h2 className="text-lg font-semibold mb-2">Interactive City Map</h2>
-      <div className="h-full rounded-xl overflow-hidden">
-        <MapContainer
-          center={position}
-          zoom={11}
-          key={city} // 🧠 ensures map resets when city changes
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={position}>
-            <Popup>{city.charAt(0).toUpperCase() + city.slice(1)}</Popup>
-          </Marker>
-        </MapContainer>
+    <div className="bg-white rounded-2xl shadow-md p-4 h-full flex flex-col">
+      <h2 className="text-md font-semibold text-gray-700 mb-2">Interactive City Map: {city}</h2>
+      <div className="flex-grow h-full"> {/* Ensure this div takes up space */}
+        {/* Render GoogleMap only if coords are valid */}
+        {coords ? (
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={13} // Initial zoom level
+            onLoad={onLoad}
+            onUnmount={onUnmount}
+            options={{ // Optional: Disable some controls
+                streetViewControl: false,
+                mapTypeControl: false,
+                fullscreenControl: false,
+            }}
+          >
+            {/* Child components, like markers, info windows, etc. */}
+            <MarkerF
+              position={center}
+              title={city}
+              onClick={handleMarkerClick} // Show info window on click
+            >
+             {/* Conditionally render InfoWindow based on state */}
+             {showInfoWindow && (
+                <InfoWindowF
+                    position={center}
+                    onCloseClick={handleInfoWindowClose} // Allow closing
+                >
+                    <div>
+                        <h3 className="font-semibold">{city}</h3>
+                        {/* Add more info if available */}
+                    </div>
+                </InfoWindowF>
+              )}
+            </MarkerF>
+          </GoogleMap>
+        ) : (
+           <div className="flex items-center justify-center h-full text-gray-500">Loading map...</div>
+        )}
       </div>
     </div>
   );
